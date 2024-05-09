@@ -1,0 +1,18 @@
+Initialize an empty page
+Create empty EmployeeRelation file
+Read CSV
+For each line of CSV (std::getline):
+	If page is full:
+		Write page to disk
+		Overwrite the page
+	Create a VariableLength Record (not a Record object)
+	Write to a page, put a tuple (record offset, record length) at slot directory
+Write the page to disk
+Receive input IDs from keyboard
+For id in IDs:
+	For each page of EmployeeRelation on disk:
+		Load to memory
+		Search each VariableLength Record for the valid id
+		When id is found:
+			Convert VariableLength Record to a Record object
+			Return Record object

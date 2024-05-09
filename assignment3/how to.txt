@@ -1,0 +1,12 @@
+- n: total pages, i: least significant bits in hash to point to which page to store
+- in the beginning, you have 4 pages and 1 page for storing block directory:
+[(int) total records;(int)total size occupied; i bits hash;(int)total pages (overflow pages excluded);(4 int)block offset]
+- when you insert a record, it hashes the id to get the number of the page to store in
+- load the page that the hash point to to memory
+- compare the new record's length to the page's capacity
++ if capacity = (total size occupied / (num of pages * block size)) < 70% give the page an overflow page, the previous page have a pointer to get to that overflow page. store the Record in that page, update slot directory:
+[(record offset, record length);(int)total records in page;(int)overflow page pointer;(int)free space pointer]
++ if capacity >= 70% capacity, extend the bucket n = n + 1, and if n > 2^i then i = i + 1. Go to page number =(n-1) - 2^(i-1) and copy any data with hash that was supposed to belong to the new page. Any record from the old page copies to the new page, its record offset at the old page is now -1. After copying any data belonging to the new page, search for any tuple in the old page's slot directory with record offset -1. The next tuple with a positive record offset is moved to that -1 slot, its data on page get moved to fill the empty slot (maybe don't copy data). Continue until at the last tuple, if its record offset is -1, delete completely the tuple. If the old page has an overflow page, go there and continue the copying process
++ if that record hash to that page, store the Record in that page, otherwise load the correct page according to hash to store the record to that page, update slot directory:
+[(record offset, record length);(int)total records in page;(int)overflow page pointer;(int)free space pointer]
+- update block directory with new information
